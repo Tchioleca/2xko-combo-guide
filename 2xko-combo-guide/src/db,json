@@ -1,0 +1,124 @@
+{
+    "characters": [
+        {
+            "id": "1",
+            "name": "Darius",
+            "region": "Noxus",
+            "archetype": "Striker",
+            "likes": "Earning battle scars, sharpening his axe, the color red",
+            "dislikes": "Weakness, cowardice, being underestimated",
+            "difficulty":"medium"
+        }
+    ],
+    "combos": [
+        {
+            "name": "Corner Carry BNB",
+            "difficulty": "medium",
+            "inputButtons": [
+                "2",
+                "LP",
+                "5",
+                "MP",
+                "S1",
+                "6",
+                "S1",
+                "S1"
+            ],
+            "characterId": "1",
+            "description": "...",
+            "id": "1",
+            "comboLikes": 1,
+            "meterCost": 1
+        },
+        {
+            "name": "Mid Screen Carry BNB",
+            "difficulty": "hard",
+            "inputButtons": [
+                "2","LP",
+                "5","MP",
+                "S1",
+                "S1S"
+            ],
+            "characterId": "1",
+            "description": "...",
+            "id": "2",
+            "comboLikes": 1,
+            "meterCost": 1
+        }
+    ],
+    "inputs": [
+        {
+            "button": "LP",
+            "description": "Light-Punch"
+            
+        },
+        {
+            "button": "MP",
+            "description": "Medium-Punch"
+        },
+        {
+            "button": "HP",
+            "description": "Heavy-Punch"
+        },
+        {
+            "button": "S1",
+            "description": "Special-Move-1"
+        },
+        {
+            "button": "S2",
+            "description": "Special-Move-2"
+        },
+        {
+            "button": "S1S",
+            "description": "Super-Move-1"
+        },
+        {
+            "button": "S2S",
+            "description": "Super-Move-2"
+        },
+        {
+            "button": "S1S2",
+            "description": "Ultimate-Move"
+        },
+        {
+            "button": "5",
+            "description": "Neutral-Input"
+        },
+        {
+            "button": "2",
+            "description": "Down"
+        },
+        {
+            "button": "6",
+            "description": "Forward"
+        },
+        {
+            "button": "4",
+            "description": "Back"
+        },
+        {
+            "button": "8",
+            "description": "Up"
+        },
+        {
+            "button": "3",
+            "description": "Down-Forward"
+        },
+        {
+            "button": "1",
+            "description": "Down-Back"
+        },
+        {
+            "button": "9",
+            "description": "Up-Forward"
+        },
+        {
+            "button": "7",
+            "description": "Up-Back"
+        },
+        {
+            "button": "T",
+            "description": "Tag"
+        }
+    ]
+}
