@@ -32,6 +32,10 @@
 }
 .input-row {
   margin-top: 8px;
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 .pill {
   display: inline-block;

@@ -1,61 +1,88 @@
-import { Link, useParams } from 'react-router-dom'
-import useCharacter from '../hooks/useCharacter'
-import './CharacterPage.css'
+import React, { useEffect, useMemo, useState } from "react";
+import axios from "axios";
+import { useParams } from "react-router-dom";
+import CharacterPageView from "./CharacterPageView";
 
-const dariusImg = 'https://res.cloudinary.com/dywiabwjp/image/upload/v1771488012/Darius_xmveud.png'
+/*
+  CONTAINER:
+  - Reads URL params (characterId)
+  - Calls API
+  - Stores state
+  - Prepares "view-ready" props (character.image)
+*/
+export default function CharacterPage() {
+  const { id } = useParams(); // route should be: /characters/:id
 
-function getCharacterImage(character) {
-  if (character.name === 'Darius') return dariusImg
-  return character.avatar
-}
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [character, setCharacter] = useState(null);
+  const [combos, setCombos] = useState([]);
 
-export default function CharacterPage(){
-  const { id } = useParams()
-  const { data: character, combos, loading, error } = useCharacter(id)
+  const baseUrl = import.meta.env.VITE_SERVER_URL || "";
 
-  if (loading) return <div className="page">Loading character…</div>
-  if (error) return <div className="page">Error: {error}</div>
-  if (!character) return <div className="page">Not found</div>
+  // Keep helper inside this file (no utils folder)
+  function getCharacterImage(characterObj) {
+    if (!characterObj) return null;
+    if (characterObj.name === "Darius") {
+      return "https://res.cloudinary.com/dywiabwjp/image/upload/v1771488012/Darius_xmveud.png";
+    }
+    return characterObj.avatar || characterObj.imageUrl || null;
+  }
 
-  const imgSrc = getCharacterImage(character)
+  useEffect(() => {
+    let alive = true;
+
+    async function load() {
+      try {
+        setLoading(true);
+        setError("");
+        setCharacter(null);
+        setCombos([]);
+
+        if (!id) throw new Error("Character not found.");
+
+        // 1) GET character
+        const characterRes = await axios.get(`${baseUrl}/characters/${id}`);
+        const characterData = characterRes.data || null;
+
+        // Add image field for the view
+        const normalizedCharacter = characterData
+          ? { ...characterData, image: getCharacterImage(characterData) }
+          : null;
+
+        // 2) GET combos for character (1 -> many relation)
+        const combosRes = await axios.get(`${baseUrl}/combos?characterId=${id}`);
+        const comboList = Array.isArray(combosRes.data) ? combosRes.data : [];
+
+        if (!alive) return;
+
+        setCharacter(normalizedCharacter);
+        setCombos(comboList);
+        setLoading(false);
+      } catch (e) {
+        if (!alive) return;
+        setError(e?.message || "Could not load character.");
+        setLoading(false);
+      }
+    }
+
+    load();
+
+    return () => {
+      alive = false;
+    };
+  }, [id, baseUrl]);
+
+  const backLink = useMemo(() => "/", []);
 
   return (
-    <div className="page">
-      <Link to="/" className="back">← Back</Link>
-
-      <h1>{character.name}</h1>
-
-      <div className="container">
-        <div className="left">
-          <div className="avatar-large">
-            {imgSrc ? <img src={imgSrc} alt={character.name} style={{maxHeight:150}}/> : <div style={{fontSize:48}}>{character.name?.[0]}</div>}
-          </div>
-        </div>
-
-        <div>
-          <p><strong>Region:</strong> {character.region}</p>
-          <p><strong>Archetype:</strong> {character.archetype}</p>
-          <p><strong>Difficulty:</strong> {character.difficulty}</p>
-          <p><strong>Likes:</strong> {character.likes}</p>
-          <p><strong>Dislikes:</strong> {character.dislikes}</p>
-
-          <h3>Combos</h3>
-
-          {combos.length ? (
-            <ul className="combo-list">
-              {combos.map(c => (
-                <li key={c.id}>
-                  <Link to={`/characters/${id}/combos/${c.id}`}>
-                    {c.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <div>No combos listed for this character.</div>
-          )}
-        </div>
-      </div>
-    </div>
-  )
+    <CharacterPageView
+      loading={loading}
+      error={error}
+      character={character}
+      combos={combos}
+      backLink={backLink}
+      characterId={id}
+    />
+  );
 }

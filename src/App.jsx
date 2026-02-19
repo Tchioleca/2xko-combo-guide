@@ -9,6 +9,7 @@ function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/characters/:id" element={<CharacterPage />} />
+
         <Route path="/characters/:characterId/combos/:comboId" element={<ComboPage />} />
         <Route path="/combos/:id" element={<ComboPage />} />
       </Routes>
