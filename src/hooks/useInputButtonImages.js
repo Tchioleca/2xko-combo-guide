@@ -109,3 +109,4 @@ export default function useInputButtonImages() {
 
   return { getButtonData, getAllButtonData, buttonMap }
 }
+// need to display also the imputs for the actions ( pop push etc...)

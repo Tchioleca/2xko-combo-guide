@@ -1,22 +1,36 @@
+import axios from 'axios';
+
 const BASE = import.meta.env.VITE_SERVER_URL || '';
 
+const api = axios.create({ baseURL: BASE });
+
 async function getJson(path) {
-  const url = BASE + path;
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
-  return res.json();
+  try {
+    const res = await api.get(path);
+    return res.data;
+  } catch (err) {
+    if (err && err.response) {
+      throw new Error(`${err.response.status} ${err.response.statusText}`);
+    }
+    throw err;
+  }
 }
 
 async function sendJson(path, method, body) {
-  const url = BASE + path;
-  const res = await fetch(url, {
-    method,
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body)
-  });
-
-  if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
-  return res.json();
+  try {
+    const res = await api.request({
+      url: path,
+      method,
+      headers: { 'Content-Type': 'application/json' },
+      data: body
+    });
+    return res.data;
+  } catch (err) {
+    if (err && err.response) {
+      throw new Error(`${err.response.status} ${err.response.statusText}`);
+    }
+    throw err;
+  }
 }
 
 // CHARACTER
@@ -46,6 +60,7 @@ export async function updateCombo(id, payload) {
   return sendJson(`/combos/${id}`, "PATCH", payload);
 }
 
+// need to add : update combo name , update description, update array information...
 export default {
   fetchCharacters,
   fetchCharacter,
