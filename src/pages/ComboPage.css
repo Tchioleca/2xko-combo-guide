@@ -26,6 +26,7 @@
   padding: 12px;
   margin-bottom: 16px;
   min-height: 80px;
+  border-color: rgb(60, 255, 0);
 }
 .combo-inputs h4 {
   margin: 0 0 8px 0;
@@ -42,7 +43,7 @@
   padding: 8px 12px;
   border-radius: 50%;
   background: var(--accent);
-  color: white;
+  color: rgb(0, 0, 0);
   margin-right: 8px;
   font-weight: bold;
   width: 40px;
