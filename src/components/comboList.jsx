@@ -8,7 +8,7 @@ import { DifficultyBox, MeterBox } from "./ComboUI";
   - Character
   - Difficulty (colored boxes)
   - Meter (colored boxes)
-  - Likes
+  - Likes ///
 */
 export default function ComboList({ title = "Most liked combos:", combos = [] }) {
   return (
