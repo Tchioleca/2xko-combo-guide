@@ -1,9 +1,9 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import ComboList from "../components/ComboList";
+import ComboList from "../components/ComboList.jsx";
 import "./HomePage.css";
 
-export default function HomePageView({ loading, error, characters, topCombos }) {
+export default function HomePageView({ loading, error, characters, topCombos, onLike }) {
   if (loading) return <div className="loading">Loading…</div>;
   if (error) return <div className="error">Error: {error}</div>;
 
@@ -31,7 +31,7 @@ export default function HomePageView({ loading, error, characters, topCombos }) 
       </div>
 
       {/* New section */}
-      <ComboList title="Most liked combos:" combos={topCombos} />
+      <ComboList title="Most liked combos:" combos={topCombos} onLike={onLike} />
     </div>
   );
 }

@@ -19,40 +19,56 @@ export default function HomePage() {
     return character.avatar || character.imageUrl || null;
   }
 
+  
+  async function handleLike(combo) {
+    try {
+      const newLikes = (combo.comboLikes ?? 0) + 1;
+
+      await axios.patch(`${baseUrl}/combos/${combo.id}`, {
+        likes: newLikes
+      });
+
+      // update local state + keep sorted
+      setTopCombos((prev) =>
+        prev
+          .map((c) => (c.id === combo.id ? { ...c, comboLikes: newLikes } : c))
+          .sort((a, b) => (b.likes ?? 0) - (a.likes ?? 0))
+      );
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
   useEffect(() => {
     async function load() {
       try {
         setLoading(true);
         setError("");
 
-        // 1) Fetch both lists
         const charsRes = await axios.get(`${baseUrl}/characters`);
         const combosRes = await axios.get(`${baseUrl}/combos`);
 
         const chars = Array.isArray(charsRes.data) ? charsRes.data : [];
         const combos = Array.isArray(combosRes.data) ? combosRes.data : [];
 
-        // 2) Normalize characters (add image for the grid)
         const charsWithImages = chars.map((c) => ({
           ...c,
           image: getCharacterImage(c)
         }));
 
-        // 3) Create a lookup map: characterId -> characterName
         const nameById = {};
         chars.forEach((c) => {
           nameById[String(c.id)] = c.name;
         });
 
-        // 4) Normalize combos (add characterName) + sort by likes
         const combosWithNames = combos
           .map((combo) => ({
             ...combo,
             characterId: String(combo.characterId || ""),
             characterName: nameById[String(combo.characterId)] || "—",
-            likes: combo.likes ?? 0
+            likes: combo.comboLikes ?? 0
           }))
-          .sort((a, b) => (b.likes ?? 0) - (a.likes ?? 0));
+          .sort((a, b) => (b.comboLikes  ?? 0) - (a.comboLikes  ?? 0));
 
         setCharacters(charsWithImages);
         setTopCombos(combosWithNames);
@@ -74,6 +90,7 @@ export default function HomePage() {
       error={error}
       characters={characters}
       topCombos={topCombos}
+      onLike={handleLike}
     />
   );
 }

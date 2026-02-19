@@ -83,3 +83,11 @@
   font-size: 0.9rem;
   opacity: 0.9;
 }
+
+.like-button {
+  background: none;
+  border: none;
+  color: var(--primary);
+  cursor: pointer;
+  font-weight: 700;
+}
