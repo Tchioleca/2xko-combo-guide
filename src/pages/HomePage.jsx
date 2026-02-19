@@ -22,17 +22,17 @@ export default function HomePage() {
   
   async function handleLike(combo) {
     try {
-      const newLikes = (combo.comboLikes ?? 0) + 1;
+      const newcomboLikes = (combo.comboLikes ?? 0) + 1;
 
       await axios.patch(`${baseUrl}/combos/${combo.id}`, {
-        likes: newLikes
+       comboLikes: newcomboLikes
       });
 
       // update local state + keep sorted
       setTopCombos((prev) =>
         prev
-          .map((c) => (c.id === combo.id ? { ...c, comboLikes: newLikes } : c))
-          .sort((a, b) => (b.likes ?? 0) - (a.likes ?? 0))
+          .map((c) => (c.id === combo.id ? { ...c, comboLikes: newcomboLikes } : c))
+          .sort((a, b) => (b.comboLikes ?? 0) - (a.comboLikes ?? 0))
       );
     } catch (e) {
       console.log(e);
@@ -62,13 +62,13 @@ export default function HomePage() {
         });
 
         const combosWithNames = combos
-          .map((combo) => ({
-            ...combo,
-            characterId: String(combo.characterId || ""),
-            characterName: nameById[String(combo.characterId)] || "—",
-            likes: combo.comboLikes ?? 0
-          }))
-          .sort((a, b) => (b.comboLikes  ?? 0) - (a.comboLikes  ?? 0));
+  .map((combo) => ({
+    ...combo,
+    characterId: String(combo.characterId || ""),
+    characterName: nameById[String(combo.characterId)] || "—",
+    comboLikes: combo.comboLikes ?? 0
+  }))
+  .sort((a, b) => (b.comboLikes ?? 0) - (a.comboLikes ?? 0));
 
         setCharacters(charsWithImages);
         setTopCombos(combosWithNames);
