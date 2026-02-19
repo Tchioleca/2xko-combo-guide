@@ -2,7 +2,8 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { InputPill, DifficultyBox, MeterBox } from "../components/ComboUI";
 import "./ComboPage.css";
-
+const dariusBg =
+  "https://res.cloudinary.com/dywiabwjp/image/upload/v1771543691/darius_ccooij.png";
 /*
   VIEW ONLY:
   - Receives ready-to-render props
@@ -20,7 +21,17 @@ export default function ComboPageView({ loading, error, combo, character, backLi
   const imgSrc = character?.image || null;
 
   return (
-    <div className="page">
+    <div className="page"
+    style={
+    character?.id === "1"
+      ? {
+          backgroundImage: `url(${dariusBg})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat"
+        }
+      : {}
+  }>
       <Link to={backLink} className="back">← Back</Link>
 
       {imgSrc && (

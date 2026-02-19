@@ -1,7 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import "./CharacterPage.css";
-
+const dariusBg =
+  "https://res.cloudinary.com/dywiabwjp/image/upload/v1771543691/darius_ccooij.png";
 /*
   VIEW ONLY:
   - Receives props
@@ -23,7 +24,18 @@ export default function CharacterPageView({
   const imgSrc = character.image || null;
 
   return (
-    <div className="page">
+    <div className="page" 
+    
+     style={
+    character?.id === "1"
+      ? {
+          backgroundImage: `url(${dariusBg})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat"
+        }
+      : {}
+  }>
       <Link to={backLink} className="back">← Back</Link>
 
       <h1>{character.name}</h1>
