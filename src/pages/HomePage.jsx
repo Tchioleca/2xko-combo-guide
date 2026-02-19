@@ -1,85 +1,79 @@
-import { Component } from "react";
-import { Link } from "react-router-dom";
+// src/pages/HomePage.jsx
+import React, { useEffect, useState } from "react";
 import axios from "axios";
-import "./HomePage.css";
+import HomePageView from "./HomePageView";
 
-function getCharacterImage(character) {
-	if (!character) return null;
-	if (character.name === 'Darius') return 'https://res.cloudinary.com/dywiabwjp/image/upload/v1771488012/Darius_xmveud.png';
-	return character.avatar || character.imageUrl;
+export default function HomePage() {
+  const [characters, setCharacters] = useState([]);
+  const [topCombos, setTopCombos] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  const baseUrl = import.meta.env.VITE_SERVER_URL || "";
+
+  function getCharacterImage(character) {
+    if (!character) return null;
+    if (character.name === "Darius") {
+      return "https://res.cloudinary.com/dywiabwjp/image/upload/v1771488012/Darius_xmveud.png";
+    }
+    return character.avatar || character.imageUrl || null;
+  }
+
+  useEffect(() => {
+    async function load() {
+      try {
+        setLoading(true);
+        setError("");
+
+        // 1) Fetch both lists
+        const charsRes = await axios.get(`${baseUrl}/characters`);
+        const combosRes = await axios.get(`${baseUrl}/combos`);
+
+        const chars = Array.isArray(charsRes.data) ? charsRes.data : [];
+        const combos = Array.isArray(combosRes.data) ? combosRes.data : [];
+
+        // 2) Normalize characters (add image for the grid)
+        const charsWithImages = chars.map((c) => ({
+          ...c,
+          image: getCharacterImage(c)
+        }));
+
+        // 3) Create a lookup map: characterId -> characterName
+        const nameById = {};
+        chars.forEach((c) => {
+          nameById[String(c.id)] = c.name;
+        });
+
+        // 4) Normalize combos (add characterName) + sort by likes
+        const combosWithNames = combos
+          .map((combo) => ({
+            ...combo,
+            characterId: String(combo.characterId || ""),
+            characterName: nameById[String(combo.characterId)] || "—",
+            likes: combo.likes ?? 0
+          }))
+          .sort((a, b) => (b.likes ?? 0) - (a.likes ?? 0));
+
+        setCharacters(charsWithImages);
+        setTopCombos(combosWithNames);
+        setLoading(false);
+      } catch (e) {
+        setCharacters([]);
+        setTopCombos([]);
+        setError(e?.message || "Could not load home data.");
+        setLoading(false);
+      }
+    }
+
+    load();
+  }, [baseUrl]);
+
+  return (
+    <HomePageView
+      loading={loading}
+      error={error}
+      characters={characters}
+      topCombos={topCombos}
+    />
+  );
 }
-
-class HomePage extends Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			characters: [],
-			loading: true,
-			error: ""
-		};
-	}
-
-	componentDidMount() {
-		this.loadCharacters();
-	}
-
-	loadCharacters() {
-		const baseUrl = import.meta.env.VITE_SERVER_URL || "";
-		this.setState({ loading: true, error: "" });
-
-		axios
-			.get(`${baseUrl}/characters`)
-			.then((response) => {
-				const list = Array.isArray(response.data) ? response.data : [];
-				this.setState({ characters: list, loading: false, error: "" });
-			})
-			.catch((error) => {
-				this.setState({
-					characters: [],
-					loading: false,
-					error: error?.message || "Could not load characters."
-				});
-			});
-	}
-
-	render() {
-		const { characters, loading, error } = this.state;
-
-		if (loading) {
-			return <div className="loading">Loading characters…</div>;
-		}
-
-		if (error) {
-			return <div className="error">Error: {error}</div>;
-		}
-
-		return (
-			<div className="page">
-				<h1 className="heading">2xko — Characters</h1>
-				<div className="grid">
-					{characters && characters.length ? (
-						characters.map((character) => {
-							const imgSrc = getCharacterImage(character);
-							return (
-								<Link key={character.id} to={`/characters/${character.id}`} className="card">
-									<div className="avatar">
-										{imgSrc ? (
-											<img src={imgSrc} alt={character.name} style={{ maxHeight: 64 }} />
-										) : (
-											<div>{character.name?.[0] || "C"}</div>
-										)}
-									</div>
-									<div className="name">{character.name}</div>
-								</Link>
-							);
-						})
-					) : (
-						<div>No characters found</div>
-					)}
-				</div>
-			</div>
-		);
-	}
-}
-
-export default HomePage;
