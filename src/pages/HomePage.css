@@ -1,0 +1,37 @@
+.page {
+  padding: 20px;
+}
+.heading {
+  margin: 0 0 12px 0;
+  font-size: 1.5rem;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, 120px);
+  gap: 12px;
+}
+.card {
+  border: 1px solid var(--border);
+  padding: 12px;
+  border-radius: 8px;
+  text-decoration: none;
+  color: inherit;
+  background: var(--surface);
+}
+.avatar {
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--muted-surface);
+  border-radius: 6px;
+}
+.name {
+  margin-top: 8px;
+  text-align: center;
+}
+.loading,
+.error {
+  padding: 20px;
+}
+

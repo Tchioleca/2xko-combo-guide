@@ -1,0 +1,30 @@
+:root {
+  /* Color palette */
+  --bg: #121212;
+  --surface: #1e1e1e;
+  --muted-surface: #262626;
+  --border: #333333;
+  --text: #eaeaea;
+  --muted-text: #bdbdbd;
+  --accent: #4fb0ff;
+  --accent-2: #7ee787;
+
+  /* Spacing / layout */
+  --gap-sm: 8px;
+  --gap-md: 12px;
+  --gap-lg: 20px;
+
+  /* Typography */
+  --fs-lg: 1.25rem;
+}
+
+.theme-light {
+  --bg: #ffffff;
+  --surface: #ffffff;
+  --muted-surface: #f6f6f6;
+  --border: #e6e6e6;
+  --text: #111111;
+  --muted-text: #666666;
+  --accent: #0b76ff;
+  --accent-2: #28c76f;
+}
