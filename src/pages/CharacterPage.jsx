@@ -1,17 +1,12 @@
+// src/pages/CharacterPage.jsx
 import React, { useEffect, useMemo, useState } from "react";
 import axios from "axios";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import CharacterPageView from "./CharacterPageView";
 
-/*
-  CONTAINER:
-  - Reads URL params (characterId)
-  - Calls API
-  - Stores state
-  - Prepares "view-ready" props (character.image)
-*/
 export default function CharacterPage() {
-  const { id } = useParams(); // route should be: /characters/:id
+  const { id } = useParams();
+  const navigate = useNavigate();
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -20,7 +15,6 @@ export default function CharacterPage() {
 
   const baseUrl = import.meta.env.VITE_SERVER_URL || "";
 
-  // Keep helper inside this file (no utils folder)
   function getCharacterImage(characterObj) {
     if (!characterObj) return null;
     if (characterObj.name === "Darius") {
@@ -36,21 +30,14 @@ export default function CharacterPage() {
       try {
         setLoading(true);
         setError("");
-        setCharacter(null);
-        setCombos([]);
 
-        if (!id) throw new Error("Character not found.");
-
-        // 1) GET character
         const characterRes = await axios.get(`${baseUrl}/characters/${id}`);
         const characterData = characterRes.data || null;
 
-        // Add image field for the view
         const normalizedCharacter = characterData
           ? { ...characterData, image: getCharacterImage(characterData) }
           : null;
 
-        // 2) GET combos for character (1 -> many relation)
         const combosRes = await axios.get(`${baseUrl}/combos?characterId=${id}`);
         const comboList = Array.isArray(combosRes.data) ? combosRes.data : [];
 
@@ -66,12 +53,41 @@ export default function CharacterPage() {
       }
     }
 
-    load();
+    if (id) load();
 
     return () => {
       alive = false;
     };
   }, [id, baseUrl]);
+
+  async function handleCreateNewCombo() {
+    try {
+      const payload = {
+        name: "Edit Comboname",
+        difficulty: "easy",
+        inputButtons: [],
+        characterId: String(id),
+        description: "Add description",
+        comboLikes: 0,
+        meterCost: 0
+      };
+
+      const res = await fetch(`${baseUrl}/combos`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      if (!res.ok) throw new Error("Failed to create combo");
+
+      const created = await res.json();
+
+      navigate(`/characters/${id}/combos/${created.id}`);
+    } catch (err) {
+      console.error(err);
+      setError("Could not create combo.");
+    }
+  }
 
   const backLink = useMemo(() => "/", []);
 
@@ -82,7 +98,7 @@ export default function CharacterPage() {
       character={character}
       combos={combos}
       backLink={backLink}
-      characterId={id}
+      onCreateNewCombo={handleCreateNewCombo}
     />
   );
 }

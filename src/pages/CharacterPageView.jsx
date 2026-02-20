@@ -1,41 +1,33 @@
+// src/pages/CharacterPageView.jsx
 import React from "react";
 import { Link } from "react-router-dom";
 import "./CharacterPage.css";
+
 const dariusBg =
   "https://res.cloudinary.com/dywiabwjp/image/upload/v1771543691/darius_ccooij.png";
 
-  const ahriBg =
+const ahriBg =
   "https://res.cloudinary.com/dywiabwjp/image/upload/v1771556971/2xko-social-3840x2160-desktopwallpaper-ahri_istn3r.png";
 
-
-/*
-  VIEW ONLY:
-  - Receives props
-  
-*/
 export default function CharacterPageView({
   loading,
   error,
   character,
-  combos,
+  combos,              // <-- IMPORTANT: use this
   backLink,
-  characterId,
-  
+  onCreateNewCombo
 }) {
   if (loading) return <div className="page">Loading character…</div>;
   if (error) return <div className="page">Error: {error}</div>;
   if (!character) return <div className="page">Not found</div>;
 
-  // Try to get character image from props (character.image) or fallback to null, works for now but needs to be refactored latter when we have more characters with custom images
-  const imgSrc = character.image || null;
-   const bg =
-    character?.id === "1"
-      ? dariusBg
-      : character?.id === "2"
-      ? ahriBg
-      : null;
+  const list = Array.isArray(combos) ? combos : []; // <-- IMPORTANT
+
+  const bg =
+    character?.id === "1" ? dariusBg : character?.id === "2" ? ahriBg : null;
+
   return (
-     <div
+    <div
       className="page"
       style={
         bg
@@ -48,36 +40,42 @@ export default function CharacterPageView({
           : {}
       }
     >
-      <Link to={backLink} className="back">← Back</Link>
+      <Link to={backLink} className="back">
+        ← Back
+      </Link>
 
-      <h1>{character.name}</h1>
+      <div className="character-details">
+        <h1 className="character-name">{character.name}</h1>
 
-      <div className="container">
-       
+        <div className="row"><strong>REGION:</strong> {character.region || "—"}</div>
+        <div className="row"><strong>ARCHETYPE:</strong> {character.archetype || "—"}</div>
+        <div className="row"><strong>DIFFICULTY:</strong> {character.difficulty || "—"}</div>
+        <div className="row"><strong>LIKES:</strong> {character.likes || "—"}</div>
+        <div className="row"><strong>DISLIKES:</strong> {character.dislikes || "—"}</div>
+      </div>
 
-        <div>
-          <p><strong>Region:</strong> {character.region}</p>
-          <p><strong>Archetype:</strong> {character.archetype}</p>
-          <p><strong>Difficulty:</strong> {character.difficulty}</p>
-          <p><strong>Likes:</strong> {character.likes}</p>
-          <p><strong>Dislikes:</strong> {character.dislikes}</p>
+      <div className="combos-header">
+        <h2 className="combos-title">COMBOS</h2>
 
-          <h3>Combos</h3>
+        <button type="button" className="create-new" onClick={onCreateNewCombo}>
+           CREATE NEW
+        </button>
+      </div>
 
-          {combos && combos.length ? (
-            <ul className="combo-list">
-              {combos.map((combo) => (
-                <li key={combo.id}>
-                  <Link to={`/characters/${characterId}/combos/${combo.id}`}>
-                    {combo.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <div>No combos listed for this character.</div>
-          )}
-        </div>
+      <div className="combo-list">
+        {list.length === 0 ? (
+          <div>NO COMBOS YET.</div>
+        ) : (
+          list.map((c) => (
+            <Link
+              key={c.id}
+              to={`/characters/${character.id}/combos/${c.id}`}
+              className="combo-item"
+            >
+              {c.name}
+            </Link>
+          ))
+        )}
       </div>
     </div>
   );

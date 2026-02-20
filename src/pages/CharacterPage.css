@@ -27,9 +27,10 @@
   margin-top: 8px;
 }
 .combo-list {
-  list-style: disc;
-  margin: 0;
-  padding-left: 20px;
+  display : flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
 }
 
 h1, h3 {
@@ -45,6 +46,21 @@ h1, h3 {
 /* .combos-header h2{
   margin:0;
 } */
+.create-new{
+  padding:6px 10px;
+  font-weight:800;
+  cursor:pointer;
+}
+/* Add to: src/pages/CharacterPage.css */
+/* (If these classes already exist, keep yours and only merge the missing ones.) */
+
+.combos-header{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin-top: 12px;
+}
+
 .create-new{
   padding:6px 10px;
   font-weight:800;
