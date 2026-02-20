@@ -1,5 +1,8 @@
 .page {
   padding: 20px;
+  background-image: url("https://res.cloudinary.com/dywiabwjp/image/upload/v1771545383/main_page_qktgmg.jpg");
+  background-size: cover;
+  background-position: center;
 }
 .heading {
   margin: 0 0 12px 0;

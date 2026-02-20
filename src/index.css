@@ -19,3 +19,29 @@ html, body, #root {
   background: var(--bg);
   color: var(--text);
 }
+
+body {
+  font-family: 'Oswald', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+h1, h2, h3 {
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+a {
+  color: #8cff00; /* neon green */
+  text-decoration: none;
+}
+
+a:visited {
+  color: #8cff00; /* prevent purple */
+}
+
+a:hover {
+  color: #aaff33; /* slightly brighter on hover */
+}
+
+a:active {
+  color: #6ee600;
+}
