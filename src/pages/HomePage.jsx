@@ -11,24 +11,14 @@ export default function HomePage() {
 
   const baseUrl = import.meta.env.VITE_SERVER_URL || "";
 
-  function getCharacterImage(character) {
-    if (!character) return null;
-    if (character.name === "Darius") {
-      return "https://res.cloudinary.com/dywiabwjp/image/upload/v1771488012/Darius_xmveud.png";
-    }
-    return character.avatar || character.imageUrl || null;
-  }
-
-  
   async function handleLike(combo) {
     try {
       const newcomboLikes = (combo.comboLikes ?? 0) + 1;
 
       await axios.patch(`${baseUrl}/combos/${combo.id}`, {
-       comboLikes: newcomboLikes
+        comboLikes: newcomboLikes
       });
 
-      // update local state + keep sorted
       setTopCombos((prev) =>
         prev
           .map((c) => (c.id === combo.id ? { ...c, comboLikes: newcomboLikes } : c))
@@ -51,10 +41,8 @@ export default function HomePage() {
         const chars = Array.isArray(charsRes.data) ? charsRes.data : [];
         const combos = Array.isArray(combosRes.data) ? combosRes.data : [];
 
-        const charsWithImages = chars.map((c) => ({
-          ...c,
-          image: getCharacterImage(c)
-        }));
+        // IMPORTANT: do not overwrite image; use what's in db.json
+        setCharacters(chars);
 
         const nameById = {};
         chars.forEach((c) => {
@@ -62,15 +50,14 @@ export default function HomePage() {
         });
 
         const combosWithNames = combos
-  .map((combo) => ({
-    ...combo,
-    characterId: String(combo.characterId || ""),
-    characterName: nameById[String(combo.characterId)] || "—",
-    comboLikes: combo.comboLikes ?? 0
-  }))
-  .sort((a, b) => (b.comboLikes ?? 0) - (a.comboLikes ?? 0));
+          .map((combo) => ({
+            ...combo,
+            characterId: String(combo.characterId || ""),
+            characterName: nameById[String(combo.characterId)] || "—",
+            comboLikes: combo.comboLikes ?? 0
+          }))
+          .sort((a, b) => (b.comboLikes ?? 0) - (a.comboLikes ?? 0));
 
-        setCharacters(charsWithImages);
         setTopCombos(combosWithNames);
         setLoading(false);
       } catch (e) {
