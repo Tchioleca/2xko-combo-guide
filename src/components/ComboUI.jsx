@@ -13,39 +13,75 @@ export function InputPill({ label, image, description }) {
   );
 }
 
+/* =========================
+   Difficulty Box (UPDATED)
+   ========================= */
 export function DifficultyBox({ level }) {
-  const colors = { easy: "#90EE90", medium: "#FFD700", hard: "#FF6B6B" };
-  const color = colors[level] || "#ccc";
+  const value = String(level || "").toLowerCase();
+
+  const colors = {
+    easy: "#90EE90",
+    medium: "#FFD700",
+    hard: "#FF6B6B"
+  };
+
+  const color = colors[value] || "#ccc";
 
   return (
     <div
       style={{
-        display: "inline-block",
-        width: 24,
-        height: 24,
+        display: "inline-flex",
+        alignItems: "center",
+        justifyContent: "center",
+        minWidth: 60,
+        height: 26,
+        padding: "0 8px",
         background: color,
-        marginRight: 6,
-        borderRadius: 4
+        borderRadius: 6,
+        fontWeight: 900,
+        fontSize: "0.75rem",
+        textTransform: "uppercase",
+        color: "#000",
+        marginRight: 6
       }}
-    />
+    >
+      {value}
+    </div>
   );
 }
 
+/* =========================
+   Meter Box (UPDATED)
+   ========================= */
 export function MeterBox({ level }) {
-  // NOTE: level will be a string like "1" after split(",")
-  const colors = { 1: "#FFD700", 2: "#FF8C00", 3: "#FF6B6B" };
-  const color = colors[level] || "#ccc";
+  const value = String(level || "");
+
+  const colors = {
+    1: "#FFD700",
+    2: "#FF8C00",
+    3: "#FF6B6B"
+  };
+
+  const color = colors[value] || "#ccc";
 
   return (
     <div
       style={{
-        display: "inline-block",
-        width: 24,
-        height: 24,
+        display: "inline-flex",
+        alignItems: "center",
+        justifyContent: "center",
+        minWidth: 32,
+        height: 26,
+        padding: "0 6px",
         background: color,
-        marginRight: 6,
-        borderRadius: 4
+        borderRadius: 6,
+        fontWeight: 900,
+        fontSize: "0.75rem",
+        color: "#000",
+        marginRight: 6
       }}
-    />
+    >
+      {value}
+    </div>
   );
 }

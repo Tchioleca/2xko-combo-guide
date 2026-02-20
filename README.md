@@ -1,5 +1,13 @@
 # React + Vite
+2XKO Combo Guide
 
+A full-stack web application for browsing characters and managing combo data for 2XKO.
+
+This project includes:
+
+Frontend — React (Vite) application
+
+Backend — JSON Server REST API
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
 Currently, two official plugins are available:
@@ -14,3 +22,95 @@ The React Compiler is not enabled on this template because of its impact on dev 
 ## Expanding the ESLint configuration
 
 If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+
+2XKO Combo Guide
+
+A full-stack web application for browsing characters and managing combo data for 2XKO.
+
+This project includes:
+
+Frontend — React (Vite) application
+
+Backend — JSON Server REST API
+
+Features
+Characters
+
+Display all characters
+
+Character portrait grid
+
+Individual character page
+
+Background per character
+
+Dynamic combo list per character
+
+Combos
+
+Create new combo
+
+Edit combo name
+
+Edit combo description
+
+Edit difficulty (click-based)
+
+Edit meter cost
+
+Add/remove input sequence
+
+Like combos
+
+View most liked combos on homepage
+
+UI Components
+
+InputPill (image-driven button display)
+
+DifficultyBox (colored box with difficulty text)
+
+MeterBox (colored meter usage indicator)
+
+
+
+Features
+Characters
+
+Display all characters
+
+Character portrait grid
+
+Individual character page
+
+Background per character
+
+Dynamic combo list per character
+
+Combos
+
+Create new combo
+
+Edit combo name
+
+Edit combo description
+
+Edit difficulty (click-based)
+
+Edit meter cost
+
+Add/remove input sequence
+
+Like combos
+
+View most liked combos on homepage
+
+UI Components
+
+InputPill (image-driven button display)
+
+DifficultyBox (colored box with difficulty text)
+
+MeterBox (colored meter usage indicator)
+
+
