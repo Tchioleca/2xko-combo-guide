@@ -1,36 +1,53 @@
+// src/pages/ComboPageView.jsx
 import React from "react";
 import { Link } from "react-router-dom";
 import { InputPill, DifficultyBox, MeterBox } from "../components/ComboUI";
 import "./ComboPage.css";
+
 const dariusBg =
   "https://res.cloudinary.com/dywiabwjp/image/upload/v1771543691/darius_ccooij.png";
 
   const ahriBg =
   "https://res.cloudinary.com/dywiabwjp/image/upload/v1771556971/2xko-social-3840x2160-desktopwallpaper-ahri_istn3r.png";
-/*
-  VIEW ONLY:
-  - Receives ready-to-render props
-  - No axios
-  - No state
-  - No setState/useEffect
-*/
-export default function ComboPageView({ loading, error, combo, character, backLink, inputMap, }) {
+
+export default function ComboPageView({
+  loading,
+  error,
+  combo,
+  character,
+  backLink,
+  inputMap,
+  // name edit
+  isEditingName,
+  draftName,
+  setDraftName,
+  onStartEditName,
+  onCancelEditName,
+  onSaveEditName,
+  // description edit
+  isEditingDesc,
+  draftDesc,
+  setDraftDesc,
+  onStartEditDesc,
+  onCancelEditDesc,
+  onSaveEditDesc
+}) {
   if (loading) return <div className="page">Loading combo…</div>;
   if (error) return <div className="page">Error: {error}</div>;
   if (!combo) return <div className="page">Not found</div>;
 
   const inputs = combo.inputs || [];
-  
   const imgSrc = character?.image || null;
     const bg = character?.id === "1"
     ? dariusBg
     : character?.id === "2"
     ? ahriBg
     : null;
+  
+
   return (
-     <div
-      className="page"
-      style={
+    <div className="page"
+    style={
         bg
           ? {
               backgroundImage: `url(${bg})`,
@@ -39,18 +56,28 @@ export default function ComboPageView({ loading, error, combo, character, backLi
               backgroundRepeat: "no-repeat"
             }
           : {}
-      }
-    >
+      } >
       <Link to={backLink} className="back">← Back</Link>
 
-      {imgSrc && (
-        <div className="combo-image">
-          <img src={imgSrc} alt={character?.name} style={{ maxHeight: 120 }} />
-        </div>
-      )}
+    
 
       <div className="combo-header">
-        <h1>{combo.name}</h1>
+        {isEditingName ? (
+          <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
+            <input
+              value={draftName}
+              onChange={(e) => setDraftName(e.target.value)}
+              style={{ padding: 6, minWidth: 220 }}
+            />
+            <button onClick={onSaveEditName} style={{ cursor: "pointer" }}>Save</button>
+            <button onClick={onCancelEditName} style={{ cursor: "pointer" }}>Cancel</button>
+          </div>
+        ) : (
+          <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
+            <h1 style={{ margin: 0 }}>{combo.name}</h1>
+            <button onClick={onStartEditName} style={{ cursor: "pointer" }}>Edit</button>
+          </div>
+        )}
       </div>
 
       <div className="combo-inputs">
@@ -58,14 +85,19 @@ export default function ComboPageView({ loading, error, combo, character, backLi
 
         <div className="input-row">
           {inputs.length ? (
-            inputs.map((input, index) => (
-              <InputPill
-                key={index}
-                label={input}
-                image={inputMap[input]?.image || null}
-                description={inputMap[input]?.description || input}
-              />
-            ))
+            inputs.map((input, index) => {
+              const key = String(input).trim();
+              const meta = inputMap?.[key];
+
+              return (
+                <InputPill
+                  key={index}
+                  label={key}
+                  image={meta?.image || null}
+                  description={meta?.description || key}
+                />
+              );
+            })
           ) : (
             <div>No input sequence</div>
           )}
@@ -101,8 +133,29 @@ export default function ComboPageView({ loading, error, combo, character, backLi
           </div>
         </div>
 
-        <div><strong>Description:</strong> {combo.description}</div>
-        <div><strong>Combo likes:</strong> {combo.likes ?? 0}</div>
+        <div>
+          <strong>Description:</strong>{" "}
+          {isEditingDesc ? (
+            <div style={{ marginTop: 8, display: "flex", gap: 8, flexWrap: "wrap", alignItems: "flex-start" }}>
+              <textarea
+                value={draftDesc}
+                onChange={(e) => setDraftDesc(e.target.value)}
+                rows={3}
+                style={{ padding: 8, minWidth: 320, width: "100%", maxWidth: 640 }}
+              />
+              <button onClick={onSaveEditDesc} style={{ cursor: "pointer" }}>Save</button>
+              <button onClick={onCancelEditDesc} style={{ cursor: "pointer" }}>Cancel</button>
+            </div>
+          ) : (
+            <span>
+              {combo.description || "—"}
+              <button onClick={onStartEditDesc} style={{ marginLeft: 10, cursor: "pointer" }}>
+                Edit
+              </button>
+            </span>
+          )}
+        </div>
+        <div><strong>Combo likes:</strong> {combo.comboLikes ?? 0}</div>
       </div>
     </div>
   );

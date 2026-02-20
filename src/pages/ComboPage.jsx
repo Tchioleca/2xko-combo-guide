@@ -1,20 +1,10 @@
+// src/pages/ComboPage.jsx
 import React, { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import ComboPageView from "./ComboPageView";
 
-/*
-  CONTAINER:
-  - Reads URL params
-  - Calls API
-  - Stores state (loading/error/data)
-  - Prepares "view-ready" props for ComboPageView
-*/
-
 export default function ComboPage() {
-  // Supports routes like:
-  // /combos/:comboId
-  // /characters/:characterId/combos/:comboId
   const { comboId, characterId } = useParams();
 
   const [loading, setLoading] = useState(true);
@@ -23,9 +13,16 @@ export default function ComboPage() {
   const [character, setCharacter] = useState(null);
   const [inputMap, setInputMap] = useState({});
 
+  // Edit name
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [draftName, setDraftName] = useState("");
+
+  // Edit description
+  const [isEditingDesc, setIsEditingDesc] = useState(false);
+  const [draftDesc, setDraftDesc] = useState("");
+
   const baseUrl = import.meta.env.VITE_SERVER_URL || "";
 
-  // Helper kept INSIDE this file (no utils folder)
   function getCharacterImage(characterObj) {
     if (!characterObj) return null;
     if (characterObj.name === "Darius") {
@@ -34,7 +31,6 @@ export default function ComboPage() {
     return characterObj.avatar || characterObj.imageUrl || null;
   }
 
-  // Helper kept INSIDE this file (no utils folder)
   function getComboInputs(comboObj) {
     return (
       comboObj?.inputButtons ||
@@ -56,46 +52,50 @@ export default function ComboPage() {
         setCombo(null);
         setCharacter(null);
 
-        if (!comboId) {
-          throw new Error("Combo not found.");
-        }
+        // reset edit UI on navigation
+        setIsEditingName(false);
+        setDraftName("");
+        setIsEditingDesc(false);
+        setDraftDesc("");
+
+        if (!comboId) throw new Error("Combo not found.");
 
         // 1) GET combo
         const comboRes = await axios.get(`${baseUrl}/combos/${comboId}`);
         const comboData = comboRes.data || null;
 
-        // 2) GET inputs (button dictionary)
+        // 2) GET inputs dictionary
         const inputsRes = await axios.get(`${baseUrl}/inputs`);
         const inputsList = Array.isArray(inputsRes.data) ? inputsRes.data : [];
 
-        // Build input map: key = input.id (token), value = { image, description }
         const builtInputMap = {};
         inputsList.forEach((item) => {
           const key = String(item.id || "").trim();
           if (!key) return;
-
           builtInputMap[key] = {
             image: item.image || null,
             description: item.description || key
           };
         });
 
-        // Normalize inputs ONCE (so the view stays simple)
+        // normalize combo for view
         const normalizedCombo = comboData
           ? { ...comboData, inputs: getComboInputs(comboData) }
           : null;
 
-        // 3) Pick character id: route param first, else combo.characterId
+        // init drafts
+        setDraftName(normalizedCombo?.name || "");
+        setDraftDesc(normalizedCombo?.description || "");
+
+        //  GET character
         const pickedCharacterId = characterId || comboData?.characterId;
 
-        // 4) GET character if possible
         let characterData = comboData?.character || null;
         if (pickedCharacterId) {
           const charRes = await axios.get(`${baseUrl}/characters/${pickedCharacterId}`);
           characterData = charRes.data || null;
         }
 
-        // Normalize image ONCE
         const normalizedCharacter = characterData
           ? { ...characterData, image: getCharacterImage(characterData) }
           : null;
@@ -120,11 +120,61 @@ export default function ComboPage() {
     };
   }, [comboId, characterId, baseUrl]);
 
-  // Build Back link (simple version)
   const backLink = useMemo(() => {
     const id = characterId || combo?.characterId || character?.id;
     return id ? `/characters/${id}` : "/";
   }, [characterId, combo?.characterId, character?.id]);
+
+  // ---- Edit Name handlers ----
+  function startEditName() {
+    setDraftName(combo?.name || "");
+    setIsEditingName(true);
+  }
+
+  function cancelEditName() {
+    setDraftName(combo?.name || "");
+    setIsEditingName(false);
+  }
+
+  async function saveEditName() {
+    if (!combo) return;
+
+    const nextName = (draftName || "").trim();
+    if (!nextName) return;
+
+    try {
+      await axios.patch(`${baseUrl}/combos/${combo.id}`, { name: nextName });
+      setCombo((prev) => (prev ? { ...prev, name: nextName } : prev));
+      setIsEditingName(false);
+    } catch (e) {
+      setError(e?.message || "Could not update combo name.");
+    }
+  }
+
+  // ---- Edit Description handlers ----
+  function startEditDesc() {
+    setDraftDesc(combo?.description || "");
+    setIsEditingDesc(true);
+  }
+
+  function cancelEditDesc() {
+    setDraftDesc(combo?.description || "");
+    setIsEditingDesc(false);
+  }
+
+  async function saveEditDesc() {
+    if (!combo) return;
+
+    const nextDesc = (draftDesc ?? "").trim();
+
+    try {
+      await axios.patch(`${baseUrl}/combos/${combo.id}`, { description: nextDesc });
+      setCombo((prev) => (prev ? { ...prev, description: nextDesc } : prev));
+      setIsEditingDesc(false);
+    } catch (e) {
+      setError(e?.message || "Could not update description.");
+    }
+  }
 
   return (
     <ComboPageView
@@ -134,6 +184,20 @@ export default function ComboPage() {
       character={character}
       backLink={backLink}
       inputMap={inputMap}
+      // name edit
+      isEditingName={isEditingName}
+      draftName={draftName}
+      setDraftName={setDraftName}
+      onStartEditName={startEditName}
+      onCancelEditName={cancelEditName}
+      onSaveEditName={saveEditName}
+      // description edit
+      isEditingDesc={isEditingDesc}
+      draftDesc={draftDesc}
+      setDraftDesc={setDraftDesc}
+      onStartEditDesc={startEditDesc}
+      onCancelEditDesc={cancelEditDesc}
+      onSaveEditDesc={saveEditDesc}
     />
   );
 }

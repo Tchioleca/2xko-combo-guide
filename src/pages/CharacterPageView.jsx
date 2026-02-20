@@ -26,6 +26,7 @@ export default function CharacterPageView({
   if (error) return <div className="page">Error: {error}</div>;
   if (!character) return <div className="page">Not found</div>;
 
+  // Try to get character image from props (character.image) or fallback to null, works for now but needs to be refactored latter when we have more characters with custom images
   const imgSrc = character.image || null;
    const bg =
     character?.id === "1"
@@ -52,15 +53,7 @@ export default function CharacterPageView({
       <h1>{character.name}</h1>
 
       <div className="container">
-        <div className="left">
-          <div className="avatar-large">
-            {imgSrc ? (
-              <img src={imgSrc} alt={character.name} style={{ maxHeight: 150 }} />
-            ) : (
-              <div style={{ fontSize: 48 }}>{character.name?.[0]}</div>
-            )}
-          </div>
-        </div>
+       
 
         <div>
           <p><strong>Region:</strong> {character.region}</p>
