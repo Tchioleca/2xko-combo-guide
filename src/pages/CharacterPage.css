@@ -37,3 +37,16 @@ h1, h3 {
   font-weight: 900;
 }
 
+.combos-header{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+/* .combos-header h2{
+  margin:0;
+} */
+.create-new{
+  padding:6px 10px;
+  font-weight:800;
+  cursor:pointer;
+}

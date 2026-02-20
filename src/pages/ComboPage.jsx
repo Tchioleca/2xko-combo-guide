@@ -21,6 +21,9 @@ export default function ComboPage() {
   const [isEditingDesc, setIsEditingDesc] = useState(false);
   const [draftDesc, setDraftDesc] = useState("");
 
+  // Edit inputs + choice-only params
+  const [isEditingInputs, setIsEditingInputs] = useState(false);
+
   const baseUrl = import.meta.env.VITE_SERVER_URL || "";
 
   function getCharacterImage(characterObj) {
@@ -57,6 +60,7 @@ export default function ComboPage() {
         setDraftName("");
         setIsEditingDesc(false);
         setDraftDesc("");
+        setIsEditingInputs(false);
 
         if (!comboId) throw new Error("Combo not found.");
 
@@ -176,6 +180,52 @@ export default function ComboPage() {
     }
   }
 
+  // ---- Edit Inputs + choice-only params handlers ----
+  function startEditInputs() {
+    setIsEditingInputs(true);
+  }
+
+  function closeEditInputs() {
+    setIsEditingInputs(false);
+  }
+
+  async function saveEditInputs({ inputButtons, difficulty, meter }) {
+    if (!combo) return;
+
+    // normalize
+    const nextInputs = Array.isArray(inputButtons) ? inputButtons : [];
+    const nextDifficulty = (difficulty || combo.difficulty || "medium").toString();
+    const nextMeter = (meter ?? combo.meter ?? combo.meterCost ?? "0").toString();
+
+    const patchPayload = {
+      inputButtons: nextInputs,
+      difficulty: nextDifficulty,
+      meter: nextMeter,
+
+      // keep numeric too if you use it elsewhere
+      meterCost: Number(nextMeter || 0)
+    };
+
+    try {
+      await axios.patch(`${baseUrl}/combos/${combo.id}`, patchPayload);
+
+      // keep your view-normalized "inputs" field in sync
+      setCombo((prev) =>
+        prev
+          ? {
+              ...prev,
+              ...patchPayload,
+              inputs: nextInputs
+            }
+          : prev
+      );
+
+      setIsEditingInputs(false);
+    } catch (e) {
+      setError(e?.message || "Could not update inputs.");
+    }
+  }
+
   return (
     <ComboPageView
       loading={loading}
@@ -198,6 +248,11 @@ export default function ComboPage() {
       onStartEditDesc={startEditDesc}
       onCancelEditDesc={cancelEditDesc}
       onSaveEditDesc={saveEditDesc}
+      // inputs edit
+      isEditingInputs={isEditingInputs}
+      onStartEditInputs={startEditInputs}
+      onCloseEditInputs={closeEditInputs}
+      onSaveEditInputs={saveEditInputs}
     />
   );
 }

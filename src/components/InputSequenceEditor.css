@@ -1,0 +1,134 @@
+.ise-root{
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+  margin: 14px 0 18px;
+}
+
+.ise-error{
+  padding:12px;
+  border-radius:12px;
+  border:1px solid rgba(255,0,0,0.3);
+  background: rgba(255,0,0,0.06);
+  font-weight:700;
+}
+
+.ise-seqBox{
+  padding:12px;
+  border-radius:16px;
+  border:2px solid rgba(255,0,0,0.7);
+  background: rgba(0,0,0,0.03);
+}
+
+.ise-title{
+  font-weight:800;
+  margin-bottom:10px;
+}
+
+.ise-seqRow{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  min-height:34px;
+  align-items:center;
+}
+
+.ise-pill{
+  display:inline-flex;
+}
+
+.ise-empty{
+  opacity:0.6;
+  font-weight:800;
+}
+
+.ise-choices{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.ise-choiceRow{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.ise-choiceLabel{
+  font-weight:800;
+  min-width:90px;
+}
+
+.ise-choiceBtns{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+.ise-choiceBtn{
+  padding:6px 10px;
+  border-radius:999px;
+  border:1px solid rgba(0,0,0,0.18);
+  background:white;
+  cursor:pointer;
+  font-weight:800;
+}
+
+.ise-choiceBtn.is-active{
+  border-color: rgba(0,0,0,0.5);
+  background: rgba(0,0,0,0.06);
+}
+
+.ise-bluePad{
+  padding:14px;
+  border-radius:18px;
+  background: rgba(120, 190, 255, 0.55);
+  border:1px solid rgba(0,0,0,0.12);
+}
+
+.ise-blueHint{
+  text-align:center;
+  font-weight:900;
+  margin-bottom:10px;
+}
+
+.ise-grid{
+  display:grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap:10px;
+}
+
+.ise-inputBtn{
+  padding:8px;
+  border-radius:16px;
+  border:1px solid rgba(0,0,0,0.18);
+  background: rgba(255,255,255,0.75);
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.ise-inputBtn:active{
+  transform: translateY(1px);
+}
+
+.ise-actions{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+}
+
+.ise-action{
+  flex:1;
+  padding:10px 12px;
+  border-radius:16px;
+  border:1px solid rgba(0,0,0,0.18);
+  font-weight:900;
+  cursor:pointer;
+}
+
+.ise-yellow{ background: rgba(255, 225, 120, 0.9); }
+.ise-green{ background: rgba(160, 255, 170, 0.9); }
+.ise-red{ background: rgba(255, 150, 150, 0.9); }

@@ -2,12 +2,13 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { InputPill, DifficultyBox, MeterBox } from "../components/ComboUI";
+import InputSequenceEditor from "../components/InputSequenceEditor";
 import "./ComboPage.css";
 
 const dariusBg =
   "https://res.cloudinary.com/dywiabwjp/image/upload/v1771543691/darius_ccooij.png";
 
-  const ahriBg =
+const ahriBg =
   "https://res.cloudinary.com/dywiabwjp/image/upload/v1771556971/2xko-social-3840x2160-desktopwallpaper-ahri_istn3r.png";
 
 export default function ComboPageView({
@@ -30,24 +31,25 @@ export default function ComboPageView({
   setDraftDesc,
   onStartEditDesc,
   onCancelEditDesc,
-  onSaveEditDesc
+  onSaveEditDesc,
+  // inputs edit
+  isEditingInputs,
+  onStartEditInputs,
+  onCloseEditInputs,
+  onSaveEditInputs
 }) {
   if (loading) return <div className="page">Loading combo…</div>;
   if (error) return <div className="page">Error: {error}</div>;
   if (!combo) return <div className="page">Not found</div>;
 
   const inputs = combo.inputs || [];
-  const imgSrc = character?.image || null;
-    const bg = character?.id === "1"
-    ? dariusBg
-    : character?.id === "2"
-    ? ahriBg
-    : null;
-  
+  const bg =
+    character?.id === "1" ? dariusBg : character?.id === "2" ? ahriBg : null;
 
   return (
-    <div className="page"
-    style={
+    <div
+      className="page"
+      style={
         bg
           ? {
               backgroundImage: `url(${bg})`,
@@ -56,10 +58,11 @@ export default function ComboPageView({
               backgroundRepeat: "no-repeat"
             }
           : {}
-      } >
-      <Link to={backLink} className="back">← Back</Link>
-
-    
+      }
+    >
+      <Link to={backLink} className="back">
+        ← Back
+      </Link>
 
       <div className="combo-header">
         {isEditingName ? (
@@ -69,19 +72,30 @@ export default function ComboPageView({
               onChange={(e) => setDraftName(e.target.value)}
               style={{ padding: 6, minWidth: 220 }}
             />
-            <button onClick={onSaveEditName} style={{ cursor: "pointer" }}>Save</button>
-            <button onClick={onCancelEditName} style={{ cursor: "pointer" }}>Cancel</button>
+            <button onClick={onSaveEditName} style={{ cursor: "pointer" }}>
+              Save
+            </button>
+            <button onClick={onCancelEditName} style={{ cursor: "pointer" }}>
+              Cancel
+            </button>
           </div>
         ) : (
           <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
             <h1 style={{ margin: 0 }}>{combo.name}</h1>
-            <button onClick={onStartEditName} style={{ cursor: "pointer" }}>Edit</button>
+            <button onClick={onStartEditName} style={{ cursor: "pointer" }}>
+              Edit
+            </button>
           </div>
         )}
       </div>
 
       <div className="combo-inputs">
-        <h4>Input sequence</h4>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10 }}>
+          <h4 style={{ margin: 0 }}>Input sequence</h4>
+          <button onClick={onStartEditInputs} style={{ cursor: "pointer" }}>
+            Edit inputs
+          </button>
+        </div>
 
         <div className="input-row">
           {inputs.length ? (
@@ -104,8 +118,11 @@ export default function ComboPageView({
         </div>
       </div>
 
+      {/* Combo details section */}
       <div className="combo-details">
-        <div><strong>Character:</strong> {character?.name || "—"}</div>
+        <div>
+          <strong>Character:</strong> {character?.name || "—"}
+        </div>
 
         <div className="difficulty-row">
           <strong>Difficulty:</strong>
@@ -143,8 +160,12 @@ export default function ComboPageView({
                 rows={3}
                 style={{ padding: 8, minWidth: 320, width: "100%", maxWidth: 640 }}
               />
-              <button onClick={onSaveEditDesc} style={{ cursor: "pointer" }}>Save</button>
-              <button onClick={onCancelEditDesc} style={{ cursor: "pointer" }}>Cancel</button>
+              <button onClick={onSaveEditDesc} style={{ cursor: "pointer" }}>
+                Save
+              </button>
+              <button onClick={onCancelEditDesc} style={{ cursor: "pointer" }}>
+                Cancel
+              </button>
             </div>
           ) : (
             <span>
@@ -155,8 +176,26 @@ export default function ComboPageView({
             </span>
           )}
         </div>
-        <div><strong>Combo likes:</strong> {combo.comboLikes ?? 0}</div>
+
+        <div>
+          <strong>Combo likes:</strong> {combo.comboLikes ?? 0}
+        </div>
       </div>
+
+      {/* form below combo details and above ComboList */}
+      <InputSequenceEditor
+        inputMap={inputMap}
+        InputPill={InputPill}
+        isEditing={!!isEditingInputs}
+        initialSequence={combo.inputs || []}
+        initialDifficulty={combo.difficulty || "medium"}
+        initialMeter={combo.meter ?? combo.meterCost ?? "0"}
+        onClose={onCloseEditInputs}
+        onSave={onSaveEditInputs}
+      />
+
+      {/* If/when you add ComboList, it should render below this editor */}
+      {/* <ComboList ... /> */}
     </div>
   );
 }
