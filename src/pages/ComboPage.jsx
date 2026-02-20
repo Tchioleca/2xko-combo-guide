@@ -21,6 +21,7 @@ export default function ComboPage() {
   const [error, setError] = useState("");
   const [combo, setCombo] = useState(null);
   const [character, setCharacter] = useState(null);
+  const [inputMap, setInputMap] = useState({});
 
   const baseUrl = import.meta.env.VITE_SERVER_URL || "";
 
@@ -63,15 +64,31 @@ export default function ComboPage() {
         const comboRes = await axios.get(`${baseUrl}/combos/${comboId}`);
         const comboData = comboRes.data || null;
 
+        // 2) GET inputs (button dictionary)
+        const inputsRes = await axios.get(`${baseUrl}/inputs`);
+        const inputsList = Array.isArray(inputsRes.data) ? inputsRes.data : [];
+
+        // Build input map: key = input.id (token), value = { image, description }
+        const builtInputMap = {};
+        inputsList.forEach((item) => {
+          const key = String(item.id || "").trim();
+          if (!key) return;
+
+          builtInputMap[key] = {
+            image: item.image || null,
+            description: item.description || key
+          };
+        });
+
         // Normalize inputs ONCE (so the view stays simple)
         const normalizedCombo = comboData
           ? { ...comboData, inputs: getComboInputs(comboData) }
           : null;
 
-        // 2) Pick character id: route param first, else combo.characterId
+        // 3) Pick character id: route param first, else combo.characterId
         const pickedCharacterId = characterId || comboData?.characterId;
 
-        // 3) GET character if possible
+        // 4) GET character if possible
         let characterData = comboData?.character || null;
         if (pickedCharacterId) {
           const charRes = await axios.get(`${baseUrl}/characters/${pickedCharacterId}`);
@@ -87,6 +104,7 @@ export default function ComboPage() {
 
         setCombo(normalizedCombo);
         setCharacter(normalizedCharacter);
+        setInputMap(builtInputMap);
         setLoading(false);
       } catch (e) {
         if (!alive) return;
@@ -115,6 +133,7 @@ export default function ComboPage() {
       combo={combo}
       character={character}
       backLink={backLink}
+      inputMap={inputMap}
     />
   );
 }

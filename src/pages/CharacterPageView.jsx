@@ -3,11 +3,15 @@ import { Link } from "react-router-dom";
 import "./CharacterPage.css";
 const dariusBg =
   "https://res.cloudinary.com/dywiabwjp/image/upload/v1771543691/darius_ccooij.png";
+
+  const ahriBg =
+  "https://res.cloudinary.com/dywiabwjp/image/upload/v1771556971/2xko-social-3840x2160-desktopwallpaper-ahri_istn3r.png";
+
+
 /*
   VIEW ONLY:
   - Receives props
-  - No axios
-  - No state
+  
 */
 export default function CharacterPageView({
   loading,
@@ -15,27 +19,34 @@ export default function CharacterPageView({
   character,
   combos,
   backLink,
-  characterId
+  characterId,
+  
 }) {
   if (loading) return <div className="page">Loading character…</div>;
   if (error) return <div className="page">Error: {error}</div>;
   if (!character) return <div className="page">Not found</div>;
 
   const imgSrc = character.image || null;
-
-  return (
-    <div className="page" 
-    
-     style={
+   const bg =
     character?.id === "1"
-      ? {
-          backgroundImage: `url(${dariusBg})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat"
-        }
-      : {}
-  }>
+      ? dariusBg
+      : character?.id === "2"
+      ? ahriBg
+      : null;
+  return (
+     <div
+      className="page"
+      style={
+        bg
+          ? {
+              backgroundImage: `url(${bg})`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              backgroundRepeat: "no-repeat"
+            }
+          : {}
+      }
+    >
       <Link to={backLink} className="back">← Back</Link>
 
       <h1>{character.name}</h1>
